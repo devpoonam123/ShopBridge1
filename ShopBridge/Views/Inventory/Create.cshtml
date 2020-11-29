@@ -1,0 +1,68 @@
+﻿
+<h2>Create</h2>
+
+
+<div class="container">
+
+    <form name="postform" id="postform" class="form-horizontal">
+        <div class="form-group">
+            <label class="text-info">Name</label>
+            <input type="text" id="txtname" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label class="text-info">Description</label>
+            <textarea id="txtdes" name="w3review" rows="4" cols="50">
+</textarea>
+        </div>
+        <div class="form-group">
+            <label class="text-info">Price</label>
+            <input type="email" id="txtprice" class="form-control" />
+        </div>
+
+        <label id="txtlabel" class="label-success">
+
+        </label>
+    </form>
+
+    <button type="submit" id="btnpost" class="btn btn-default">Save</button>
+
+    @*<input type="button" id="btnpost" value="Submit" class="button1" />*@
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+
+        $("#btnpost").click(function () {
+
+            var data = {
+                Name: $("#txtname").val().trim(),
+                Description: $("#txtdes").val().trim(),
+                Price: $("#txtprice").val().trim(),
+            }
+
+            $.ajax({
+                url: 'http://localhost:6068/api/Inventory/Add',
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function (d) {
+
+                    $('#txtlabel').text('Saved Successfully');
+                    //console.log(d+"u");
+                    //alert("Saved Successfully");
+
+                },
+                error: function (e) {
+                    console.log(e);
+                    alert("Error please try again");
+                }
+            });
+        });
+    });
+</script>

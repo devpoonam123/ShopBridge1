@@ -1,0 +1,114 @@
+﻿@model IEnumerable<ShopBridge.Models.Inventory>
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@using GridMvc.Html
+<h2>Menu Item List</h2>
+<link href="@Url.Content("~/Content/Gridmvc.css")" rel="stylesheet" />
+<link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/jquery-1.9.1.min.js")"></script>
+<script src="@Url.Content("~/Scripts/gridmvc.min.js")"></script>
+
+<div class="code-cut">
+
+    @if (Model != null)
+    {
+        @Html.Grid(Model).Named("RequestGrid").Columns(columns =>
+   {
+       columns.Add(c => c.Name).Titled("Name").Filterable(true);
+       columns.Add(c => c.Price).Titled("Price").Filterable(true);
+
+
+       columns.Add()
+                           .Encoded(false)
+                           .Sanitized(false)
+                           .SetWidth(30)
+                           .RenderValueAs(d => new HtmlString(
+
+
+
+                                "<button type='button' " +
+                                 "onclick='productDelete(this);' " +
+
+                                 "data-id='" + d.Id + "'>" + "Delete" +
+
+                              "</button>"
+                               )
+                           );
+
+
+
+
+       columns.Add()
+                          .Encoded(false)
+                          .Sanitized(false)
+                          .SetWidth(30)
+                          .RenderValueAs(m => Html.ActionLink("Details", "Details", new { id = m.Id }));
+
+   }).WithPaging(6).Sortable(true)
+    }
+</div>
+
+@*<button class="button button1" type="button" onclick="location.href='@Url.Action("Create", "MenuItem")'">
+        Create New
+    </button>*@
+
+<script type="text/javascript">
+
+    function productDelete(v) {
+
+        console.log(v);
+        var obj = $(v);
+        var id = $(v).data('id');
+        //var id = $(v).data("id");
+        alert(id);
+        var d = {
+            Id: id
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:6068/api/Inventory/Remove/' + id,
+            dataType: 'json',
+            //date: {"Id":id},
+            success: function (data) {
+                alert("succ");
+
+                $(obj).closest("tr").remove(); // You can remove row like this
+
+
+            },
+
+            error: function (error) {
+                alert("error" + error);
+                console.log(error);
+            }
+        })
+
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
