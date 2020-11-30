@@ -1,31 +1,42 @@
-﻿
-<h2>Create</h2>
+﻿<h4>Create Inventory</h4>
+<hr />
 
 
 <div class="container">
-
-    <form name="postform" id="postform" class="form-horizontal">
+    <form enctype="multipart/form-data" name="postform" id="postform" class="form-horizontal" style="padding-left:30%">
         <div class="form-group">
             <label class="text-info">Name</label>
-            <input type="text" id="txtname" class="form-control" />
+            <input type="text" id="txtname" class="form-control" required />
         </div>
 
         <div class="form-group">
             <label class="text-info">Description</label>
-            <textarea id="txtdes" name="w3review" rows="4" cols="50">
-</textarea>
+            <br />
+            <textarea id="txtdes" name="w3review" rows="2" cols="50">
+            </textarea>
+            
         </div>
         <div class="form-group">
             <label class="text-info">Price</label>
-            <input type="email" id="txtprice" class="form-control" />
+            <input type="number" id="txtprice" class="form-control" style="width:180px;" required />
+            
         </div>
+        <div class="form-group">
+            <label class="text-info">Image :</label>
+            <input type="file" id="imageUploadForm" name="image" multiple="multiple" />
 
+
+        </div>
         <label id="txtlabel" class="label-success">
 
         </label>
+        <button type="submit" id="btnpost" class="btn btn-default">Save</button>
+        <button class="btn btn-default" type="button" onclick="location.href='@Url.Action("Index", "Inventory")'">
+            Back To List
+        </button>
     </form>
 
-    <button type="submit" id="btnpost" class="btn btn-default">Save</button>
+
 
     @*<input type="button" id="btnpost" value="Submit" class="button1" />*@
 </div>
@@ -35,34 +46,63 @@
 
 
 <script type="text/javascript">
-
     $(function () {
 
         $("#btnpost").click(function () {
 
-            var data = {
-                Name: $("#txtname").val().trim(),
-                Description: $("#txtdes").val().trim(),
-                Price: $("#txtprice").val().trim(),
+            var formData = new FormData();
+            var totalFiles = document.getElementById("imageUploadForm").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("imageUploadForm").files[i];
+                formData.append("imageUploadForm", file);
             }
 
+
+
+
             $.ajax({
-                url: 'http://localhost:6068/api/Inventory/Add',
                 type: 'POST',
+                url: 'SaveImageInFolder',
+                enctype: 'multipart/form-data',
+                data: formData,// { path: $("#file").val().trim()},
                 dataType: 'json',
-                data: data,
-                success: function (d) {
+                contentType: false,
+                processData: false,
+                success: function (path) {
+                    var data = {
+                        Name: $("#txtname").val().trim(),
+                        Description: $("#txtdes").val().trim(),
+                        Price: $("#txtprice").val().trim(),
+                        Image: path
+                    }
+                    alert('done');
+                    alert(path);
+                    $.ajax({
+                        url: 'http://localhost:6068/api/Inventory/Add',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function (d) {
 
-                    $('#txtlabel').text('Saved Successfully');
-                    //console.log(d+"u");
-                    //alert("Saved Successfully");
+                            $('#txtlabel').text('Saved Successfully');
+                            //console.log(d+"u");
+                            //alert("Saved Successfully");
 
+                        },
+                        error: function (e) {
+                            console.log(e);
+                            alert("Error please try again");
+                        }
+                    });
                 },
-                error: function (e) {
-                    console.log(e);
-                    alert("Error please try again");
+                error: function (error) {
+                    console.log(error);
+                    alert(error);
                 }
-            });
+
+            })
+
+
         });
     });
 </script>
